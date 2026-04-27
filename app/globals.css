@@ -1,42 +1,61 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(224 71.4% 4.1%);
+  /* ── Brand ─────────────────────────────────────── */
+  --color-brand:           #E8581A;
+  --color-brand-light:     #F59E0B;
+  --color-brand-muted:     #FDE8D8;
 
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(224 71.4% 4.1%);
+  /* ── Semantic ───────────────────────────────────── */
+  --color-background:      #FDFAF6;
+  --color-foreground:      #1A1209;
 
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(224 71.4% 4.1%);
+  --color-card:            #FFFFFF;
+  --color-card-foreground: #1A1209;
 
-  --color-primary: hsl(262.1 83.3% 57.8%);
-  --color-primary-foreground: hsl(210 20% 98%);
+  --color-popover:         #FFFFFF;
+  --color-popover-foreground: #1A1209;
 
-  --color-secondary: hsl(220 14.3% 95.9%);
-  --color-secondary-foreground: hsl(220.9 39.3% 11%);
+  --color-primary:         #E8581A;
+  --color-primary-foreground: #FFFFFF;
 
-  --color-muted: hsl(220 14.3% 95.9%);
-  --color-muted-foreground: hsl(220 8.9% 46.1%);
+  --color-secondary:       #F4EFE7;
+  --color-secondary-foreground: #4A3728;
 
-  --color-accent: hsl(220 14.3% 95.9%);
-  --color-accent-foreground: hsl(220.9 39.3% 11%);
+  --color-muted:           #F4EFE7;
+  --color-muted-foreground:#8A7B6C;
 
-  --color-destructive: hsl(0 84.2% 60.2%);
-  --color-destructive-foreground: hsl(210 20% 98%);
+  --color-accent:          #FDE8D8;
+  --color-accent-foreground: #8B2500;
 
-  --color-border: hsl(220 13% 91%);
-  --color-input: hsl(220 13% 91%);
-  --color-ring: hsl(262.1 83.3% 57.8%);
+  --color-destructive:     #DC2626;
+  --color-destructive-foreground: #FFFFFF;
 
-  --radius: 0.75rem;
+  --color-border:          #E8DECE;
+  --color-input:           #E8DECE;
+  --color-ring:            #E8581A;
 
-  --font-sans: 'Geist', system-ui, -apple-system, sans-serif;
+  /* ── Typography ─────────────────────────────────── */
+  --font-sans: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+
+  /* ── Radius ─────────────────────────────────────── */
+  --radius: 0.875rem;
+
+  /* ── Shadows ────────────────────────────────────── */
+  --shadow-card: 0 1px 3px 0 rgb(26 18 9 / 0.06), 0 1px 2px -1px rgb(26 18 9 / 0.04);
+  --shadow-elevated: 0 4px 24px 0 rgb(26 18 9 / 0.10), 0 1px 4px 0 rgb(26 18 9 / 0.06);
 }
 
 @layer base {
-  * {
+  *, *::before, *::after {
     border-color: var(--color-border);
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: 'cv01', 'cv02', 'ss01';
   }
 
   body {
@@ -45,32 +64,101 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
   }
 
   :focus-visible {
     outline: 2px solid var(--color-ring);
     outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-brand-muted);
+    color: var(--color-foreground);
   }
 }
 
 @layer utilities {
-  .animate-in {
-    animation: fade-in 0.2s ease-out;
+  /* ── Brand gradient ──────────────────────────────── */
+  .gradient-brand {
+    background: linear-gradient(135deg, #E8581A 0%, #F59E0B 100%);
   }
 
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(4px); }
+  .gradient-brand-soft {
+    background: linear-gradient(135deg, #FDE8D8 0%, #FEF3C7 100%);
+  }
+
+  .gradient-page {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, #FDE8D8 0%, transparent 60%),
+                linear-gradient(180deg, #FDFAF6 0%, #FDF8F2 100%);
+  }
+
+  /* ── Text gradient ───────────────────────────────── */
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #E8581A 0%, #F59E0B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Glass ───────────────────────────────────────── */
+  .glass {
+    background: rgba(255, 253, 250, 0.72);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(232, 222, 206, 0.6);
+  }
+
+  /* ── Animations ──────────────────────────────────── */
+  .animate-in {
+    animation: plately-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-in-up {
+    animation: plately-fade-in-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes plately-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes plately-fade-in-up {
+    from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+  /* ── Dot pattern bg ─────────────────────────────── */
+  .bg-dots {
+    background-image: radial-gradient(circle, #E8DECE 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 
-  .gradient-brand {
-    background: linear-gradient(135deg, hsl(262.1 83.3% 57.8%), hsl(240 80% 65%));
+  /* ── Noise texture ───────────────────────────────── */
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
   }
+
+  /* ── Scrollbar ───────────────────────────────────── */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #E8DECE transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #E8DECE; border-radius: 99px; }
 }

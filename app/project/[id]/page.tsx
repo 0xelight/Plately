@@ -9,42 +9,41 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import {
   Download, Copy, Check, ChevronLeft, ChevronRight,
-  Send, Loader2, Utensils, RefreshCw, Hash, ArrowLeft
+  Send, Loader2, ChefHat, RefreshCw, Hash,
+  ArrowLeft, Sparkles, Volume2, Image as ImageIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import type { Project, Message, SceneJSON } from '@/lib/types'
 
-const QUICK_SUGGESTIONS = [
-  'Caption plus courte',
-  'Musique plus énergique',
-  'Texte en blanc',
-  'Slide plus dynamique',
+const SUGGESTIONS = [
+  { label: 'Caption plus courte', icon: '✂️' },
+  { label: 'Musique plus énergique', icon: '⚡' },
+  { label: 'Texte en blanc', icon: '🎨' },
+  { label: 'Plus de dynamisme', icon: '🚀' },
 ]
 
+/* ─── Video Player ─────────────────────────────────────────────── */
 function VideoPlayer({ url }: { url: string }) {
   return (
-    <div className="relative w-full max-w-[320px] mx-auto">
-      <div className="aspect-[9/16] rounded-3xl overflow-hidden bg-black shadow-2xl">
-        <video
-          src={url}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-        />
+    <div className="relative w-full max-w-[288px] mx-auto">
+      {/* Phone frame */}
+      <div className="absolute inset-0 rounded-[2.5rem] border-[6px] border-foreground/8 shadow-2xl pointer-events-none z-10" />
+      <div className="aspect-[9/16] rounded-[2.2rem] overflow-hidden bg-foreground">
+        <video src={url} autoPlay muted loop playsInline className="w-full h-full object-cover" />
       </div>
       <a
         href={url}
         download
-        className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+        className="absolute bottom-4 right-2 z-20 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-foreground/80 backdrop-blur-sm text-white text-xs font-semibold hover:bg-foreground transition-colors"
       >
-        <Download className="h-4 w-4" />
+        <Download className="h-3.5 w-3.5" />
+        Télécharger
       </a>
     </div>
   )
 }
 
+/* ─── Carousel Player ──────────────────────────────────────────── */
 function CarouselPlayer({ urls }: { urls: string[] }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   const [current, setCurrent] = useState(0)
@@ -56,26 +55,21 @@ function CarouselPlayer({ urls }: { urls: string[] }) {
 
   async function downloadAll() {
     const zip = new JSZip()
-    await Promise.all(
-      urls.map(async (url, i) => {
-        const res = await fetch(url)
-        const blob = await res.blob()
-        zip.file(`slide_${i + 1}.jpg`, blob)
-      })
-    )
+    await Promise.all(urls.map(async (url, i) => {
+      const blob = await fetch(url).then(r => r.blob())
+      zip.file(`plately-slide-${i + 1}.jpg`, blob)
+    }))
     const blob = await zip.generateAsync({ type: 'blob' })
     const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = 'plately-carousel.zip'
-    a.click()
+    a.href = URL.createObjectURL(blob); a.download = 'plately-carousel.zip'; a.click()
   }
 
   return (
-    <div className="relative w-full max-w-[320px] mx-auto">
+    <div className="relative w-full max-w-[340px] mx-auto">
       <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl" ref={emblaRef}>
         <div className="flex h-full">
           {urls.map((url, i) => (
-            <div key={i} className="flex-[0_0_100%] min-w-0 relative">
+            <div key={i} className="flex-[0_0_100%] min-w-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={url} alt={`Slide ${i + 1}`} className="w-full h-full object-cover" />
             </div>
@@ -83,61 +77,49 @@ function CarouselPlayer({ urls }: { urls: string[] }) {
         </div>
       </div>
 
-      {/* Navigation */}
-      <button
-        className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors"
-        onClick={() => emblaApi?.scrollPrev()}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
-      <button
-        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors"
-        onClick={() => emblaApi?.scrollNext()}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </button>
+      {/* Nav arrows */}
+      {urls.length > 1 && <>
+        <button onClick={() => emblaApi?.scrollPrev()}
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors z-10">
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <button onClick={() => emblaApi?.scrollNext()}
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors z-10">
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </>}
 
-      {/* Dots */}
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
+      {/* Slide counter */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
         {urls.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => emblaApi?.scrollTo(i)}
-            className={cn('w-1.5 h-1.5 rounded-full transition-all', i === current ? 'bg-white w-4' : 'bg-white/50')}
-          />
+          <button key={i} onClick={() => emblaApi?.scrollTo(i)}
+            className={cn('h-1.5 rounded-full transition-all duration-300 bg-white',
+              i === current ? 'w-5 opacity-100' : 'w-1.5 opacity-50')} />
         ))}
       </div>
 
       {/* Download */}
-      <button
-        onClick={downloadAll}
-        className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/80 transition-colors"
-      >
-        <Download className="h-4 w-4" />
+      <button onClick={downloadAll}
+        className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-black/60 backdrop-blur-sm text-white text-xs font-semibold hover:bg-black/80 transition-colors">
+        <Download className="h-3.5 w-3.5" />
+        ZIP
       </button>
     </div>
   )
 }
 
-function CopyButton({ text }: { text: string }) {
+/* ─── Copy button ──────────────────────────────────────────────── */
+function CopyBtn({ text, className }: { text: string; className?: string }) {
   const [copied, setCopied] = useState(false)
-
-  function handleCopy() {
-    navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   return (
-    <button
-      onClick={handleCopy}
-      className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-    >
-      {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+    <button onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
+      className={cn('p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground', className)}>
+      {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
     </button>
   )
 }
 
+/* ─── Page ─────────────────────────────────────────────────────── */
 export default function ProjectPage() {
   const params = useParams()
   const id = params.id as string
@@ -148,241 +130,236 @@ export default function ProjectPage() {
   const [input, setInput] = useState('')
   const [chatLoading, setChatLoading] = useState(false)
   const [rerendering, setRerendering] = useState(false)
+  const [activeTab, setActiveTab] = useState<'video' | 'carousel'>('video')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const fetchProject = useCallback(async () => {
-    const res = await fetch(`/api/project/${id}/status`)
-    const data = await res.json() as Project
+    const data = await fetch(`/api/project/${id}/status`).then(r => r.json()) as Project
     setProject(data)
     if (data.scene_json) setSceneJson(data.scene_json)
+    if (data.video_url) setActiveTab('video')
+    else if (data.carousel_urls?.length) setActiveTab('carousel')
   }, [id])
 
   const fetchMessages = useCallback(async () => {
-    const res = await fetch(`/api/project/${id}/messages`)
-    const data = await res.json() as Message[]
+    const data = await fetch(`/api/project/${id}/messages`).then(r => r.json()) as Message[]
     setMessages(data)
   }, [id])
 
-  useEffect(() => {
-    fetchProject()
-    fetchMessages()
-  }, [fetchProject, fetchMessages])
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  useEffect(() => { fetchProject(); fetchMessages() }, [fetchProject, fetchMessages])
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
 
   async function handleChat(msg: string) {
     if (!msg.trim() || !sceneJson || chatLoading) return
-    const text = msg.trim()
-    setInput('')
-    setChatLoading(true)
+    const text = msg.trim(); setInput(''); setChatLoading(true)
 
-    // Optimistic user message
-    const tempMsg: Message = {
-      id: Date.now().toString(),
-      project_id: id,
-      role: 'user',
-      content: text,
-      scene_json_snapshot: null,
-      created_at: new Date().toISOString(),
-    }
-    setMessages(prev => [...prev, tempMsg])
+    const tempId = Date.now().toString()
+    setMessages(prev => [...prev, { id: tempId, project_id: id, role: 'user', content: text, scene_json_snapshot: null, created_at: new Date().toISOString() }])
 
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          project_id: id,
-          message: text,
-          scene_json: sceneJson,
-          history: messages.slice(-6),
-        }),
-      })
-      const data = await res.json()
+      const data = await fetch('/api/chat', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id: id, message: text, scene_json: sceneJson, history: messages.slice(-6) }),
+      }).then(r => r.json())
+
       setSceneJson(data.updated_scene_json)
-      setMessages(prev => [...prev.filter(m => m.id !== tempMsg.id), {
-        id: Date.now().toString() + '_u',
-        project_id: id,
-        role: 'user',
-        content: text,
-        scene_json_snapshot: null,
-        created_at: new Date().toISOString(),
-      }, {
-        id: Date.now().toString() + '_a',
-        project_id: id,
-        role: 'assistant',
-        content: data.assistant_message,
-        scene_json_snapshot: data.updated_scene_json,
-        created_at: new Date().toISOString(),
-      }])
+      setMessages(prev => [
+        ...prev.filter(m => m.id !== tempId),
+        { id: tempId + '_u', project_id: id, role: 'user' as const, content: text, scene_json_snapshot: null, created_at: new Date().toISOString() },
+        { id: tempId + '_a', project_id: id, role: 'assistant' as const, content: data.assistant_message, scene_json_snapshot: data.updated_scene_json, created_at: new Date().toISOString() },
+      ])
 
       if (data.needs_rerender) {
         setRerendering(true)
         const photoPaths = (project?.carousel_urls ?? []).map((u: string) =>
-          u.replace(`/outputs/${id}/`, `/tmp/plately/${id}/`)
-        )
+          u.replace(`/outputs/${id}/`, `/tmp/plately/${id}/`))
 
-        if (data.rerender_type === 'carousel' || data.rerender_type === 'both') {
-          await fetch('/api/generate-carousel', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ project_id: id, scene_json: data.updated_scene_json, photo_paths: photoPaths }),
-          })
-        }
-        if (data.rerender_type === 'video' || data.rerender_type === 'both') {
-          await fetch('/api/generate-video', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ project_id: id, scene_json: data.updated_scene_json, photo_paths: photoPaths }),
-          })
-        }
+        const rerenderCalls: Promise<Response>[] = []
+        if (data.rerender_type === 'carousel' || data.rerender_type === 'both')
+          rerenderCalls.push(fetch('/api/generate-carousel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_id: id, scene_json: data.updated_scene_json, photo_paths: photoPaths }) }))
+        if (data.rerender_type === 'video' || data.rerender_type === 'both')
+          rerenderCalls.push(fetch('/api/generate-video', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_id: id, scene_json: data.updated_scene_json, photo_paths: photoPaths }) }))
+
+        await Promise.all(rerenderCalls)
         await fetchProject()
         setRerendering(false)
       }
-    } finally {
-      setChatLoading(false)
-      inputRef.current?.focus()
-    }
+    } finally { setChatLoading(false); inputRef.current?.focus() }
   }
 
-  if (!project) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  if (!project) return (
+    <div className="min-h-screen flex items-center justify-center gradient-page">
+      <div className="text-center space-y-3">
+        <Loader2 className="h-8 w-8 animate-spin text-brand mx-auto" />
+        <p className="text-sm text-muted-foreground">Chargement…</p>
       </div>
-    )
-  }
+    </div>
+  )
 
   const hasVideo = !!project.video_url
   const hasCarousel = !!(project.carousel_urls?.length)
   const caption = sceneJson?.caption ?? project.caption ?? ''
   const hashtags = sceneJson?.hashtags ?? project.hashtags ?? []
+  const music = sceneJson?.music ?? ''
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3">
-          <Link href="/new" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-sm">
-            <ArrowLeft className="h-4 w-4" />
-            Nouveau
+      <header className="glass sticky top-0 z-20 border-b">
+        <div className="max-w-7xl mx-auto px-5 h-14 flex items-center gap-3">
+          <Link href="/new" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
+            <ArrowLeft className="h-4 w-4" /> Nouveau
           </Link>
           <div className="h-4 w-px bg-border" />
-          <div className="w-6 h-6 rounded-md gradient-brand flex items-center justify-center">
-            <Utensils className="h-3.5 w-3.5 text-white" />
+          <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center shadow-sm shadow-brand/30">
+            <ChefHat className="h-3.5 w-3.5 text-white" />
           </div>
-          <span className="font-bold text-sm">Plately</span>
+          <span className="font-extrabold text-sm tracking-tight">Plately</span>
+
           {rerendering && (
-            <div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
-              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-              Régénération…
+            <div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground bg-muted px-3 py-1.5 rounded-full">
+              <RefreshCw className="h-3.5 w-3.5 animate-spin text-brand" />
+              Régénération en cours…
             </div>
           )}
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col lg:flex-row max-w-6xl mx-auto w-full gap-0 lg:gap-0">
-        {/* Left — Preview */}
-        <div className="flex-1 p-6 lg:p-10 space-y-6 lg:overflow-y-auto">
-          {/* Media preview */}
-          {hasVideo && project.video_url && <VideoPlayer url={project.video_url} />}
-          {hasCarousel && !hasVideo && project.carousel_urls && (
-            <CarouselPlayer urls={project.carousel_urls} />
-          )}
-          {hasVideo && hasCarousel && project.carousel_urls && (
-            <div className="mt-6">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Carrousel</p>
-              <CarouselPlayer urls={project.carousel_urls} />
+      <div className="flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full">
+
+        {/* ── Left — Preview ─────────────────────────────── */}
+        <div className="flex-1 p-6 lg:p-10 space-y-6 min-h-0 overflow-y-auto">
+
+          {/* Tab toggle if both */}
+          {hasVideo && hasCarousel && (
+            <div className="flex gap-1 p-1 bg-muted rounded-2xl w-fit">
+              {[
+                { key: 'video' as const, label: 'Vidéo', icon: Volume2 },
+                { key: 'carousel' as const, label: 'Carrousel', icon: ImageIcon },
+              ].map(({ key, label, icon: Icon }) => (
+                <button key={key} onClick={() => setActiveTab(key)}
+                  className={cn('flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all',
+                    activeTab === key ? 'bg-white shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                  <Icon className="h-4 w-4" />{label}
+                </button>
+              ))}
             </div>
           )}
 
-          {/* Caption */}
+          {/* Media */}
+          {hasVideo && activeTab === 'video' && project.video_url && <VideoPlayer url={project.video_url} />}
+          {hasCarousel && activeTab === 'carousel' && project.carousel_urls && <CarouselPlayer urls={project.carousel_urls} />}
+          {hasVideo && !hasCarousel && project.video_url && <VideoPlayer url={project.video_url} />}
+          {hasCarousel && !hasVideo && project.carousel_urls && <CarouselPlayer urls={project.carousel_urls} />}
+
+          {/* Caption card */}
           {caption && (
-            <div className="bg-white rounded-2xl border border-border p-4 shadow-sm">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-sm text-foreground leading-relaxed flex-1">{caption}</p>
-                <CopyButton text={caption} />
+            <div className="bg-card rounded-2xl border border-border p-5 shadow-card max-w-[400px]">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Caption</span>
+                <CopyBtn text={caption} />
               </div>
+              <p className="text-sm leading-relaxed">{caption}</p>
             </div>
           )}
 
           {/* Hashtags */}
           {hashtags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {hashtags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center gap-0.5 text-xs bg-primary/10 text-primary rounded-full px-3 py-1 font-medium"
-                >
-                  <Hash className="h-3 w-3" />
-                  {tag.replace(/^#/, '')}
-                </span>
-              ))}
-              <CopyButton text={hashtags.join(' ')} />
+            <div className="max-w-[400px]">
+              <div className="flex items-center gap-2 mb-2.5">
+                <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Hashtags</span>
+                <CopyBtn text={hashtags.join(' ')} />
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {hashtags.map((tag, i) => (
+                  <span key={i} className="inline-flex items-center gap-0.5 text-xs bg-accent text-brand rounded-lg px-2.5 py-1 font-semibold border border-brand/15">
+                    <Hash className="h-2.5 w-2.5" />{tag.replace(/^#/, '')}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Music badge */}
+          {music && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground max-w-[400px]">
+              <Volume2 className="h-3.5 w-3.5 text-brand shrink-0" />
+              <span className="font-medium capitalize">{music.replace(/-/g, ' ')}</span>
             </div>
           )}
         </div>
 
         {/* Divider */}
-        <div className="hidden lg:block w-px bg-border" />
+        <div className="hidden lg:block w-px bg-border shrink-0" />
 
-        {/* Right — Chat */}
-        <div className="w-full lg:w-[380px] flex flex-col bg-white/60 lg:bg-white/80 border-t lg:border-t-0 lg:border-l border-border">
-          <div className="p-4 border-b border-border">
-            <h2 className="font-semibold text-sm">Modifier le contenu</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Décrivez les changements souhaités</p>
+        {/* ── Right — Chat ────────────────────────────────── */}
+        <div className="w-full lg:w-[400px] shrink-0 flex flex-col border-t lg:border-t-0 bg-card/50">
+
+          {/* Chat header */}
+          <div className="px-5 py-4 border-b border-border">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg gradient-brand-soft border border-brand/20 flex items-center justify-center">
+                <Sparkles className="h-3.5 w-3.5 text-brand" />
+              </div>
+              <div>
+                <p className="text-sm font-bold">Éditeur IA</p>
+                <p className="text-[11px] text-muted-foreground">Décrivez vos modifications</p>
+              </div>
+            </div>
           </div>
 
           {/* Quick suggestions */}
-          <div className="p-3 border-b border-border flex flex-wrap gap-2">
-            {QUICK_SUGGESTIONS.map((s) => (
-              <button
-                key={s}
-                onClick={() => handleChat(s)}
-                disabled={chatLoading}
-                className="text-xs px-3 py-1.5 rounded-full border border-border bg-white hover:border-primary/40 hover:bg-primary/5 transition-all disabled:opacity-50"
-              >
-                {s}
-              </button>
-            ))}
+          <div className="px-4 py-3 border-b border-border">
+            <div className="flex flex-wrap gap-1.5">
+              {SUGGESTIONS.map(s => (
+                <button key={s.label} onClick={() => handleChat(s.label)} disabled={chatLoading}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-border bg-background hover:border-brand/40 hover:bg-accent font-medium transition-all disabled:opacity-40">
+                  <span>{s.icon}</span>{s.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Messages */}
-          <ScrollArea className="flex-1 min-h-0">
+          <ScrollArea className="flex-1 min-h-0 custom-scrollbar">
             <div className="p-4 space-y-3">
               {messages.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground">Demandez des modifications à votre contenu</p>
+                <div className="py-12 text-center">
+                  <div className="w-12 h-12 rounded-2xl gradient-brand-soft border border-brand/20 flex items-center justify-center mx-auto mb-3">
+                    <Sparkles className="h-5 w-5 text-brand" />
+                  </div>
+                  <p className="text-sm font-medium">Demandez une modification</p>
+                  <p className="text-xs text-muted-foreground mt-1">Caption, musique, texte, style…</p>
                 </div>
               )}
-              {messages.map((m) => (
-                <div
-                  key={m.id}
-                  className={cn('flex', m.role === 'user' ? 'justify-end' : 'justify-start')}
-                >
-                  <div
-                    className={cn(
-                      'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm',
-                      m.role === 'user'
-                        ? 'bg-primary text-white rounded-tr-sm'
-                        : 'bg-secondary text-secondary-foreground rounded-tl-sm'
-                    )}
-                  >
+              {messages.map(m => (
+                <div key={m.id} className={cn('flex gap-2', m.role === 'user' ? 'justify-end' : 'justify-start')}>
+                  {m.role === 'assistant' && (
+                    <div className="w-6 h-6 rounded-lg gradient-brand shrink-0 mt-0.5 flex items-center justify-center">
+                      <Sparkles className="h-3 w-3 text-white" />
+                    </div>
+                  )}
+                  <div className={cn(
+                    'max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
+                    m.role === 'user'
+                      ? 'gradient-brand text-white rounded-tr-sm'
+                      : 'bg-muted text-foreground rounded-tl-sm border border-border'
+                  )}>
                     {m.content}
                   </div>
                 </div>
               ))}
               {chatLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-secondary rounded-2xl rounded-tl-sm px-3.5 py-2.5">
-                    <div className="flex gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.3s]" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:-0.15s]" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce" />
-                    </div>
+                <div className="flex gap-2 justify-start">
+                  <div className="w-6 h-6 rounded-lg gradient-brand shrink-0 mt-0.5 flex items-center justify-center">
+                    <Sparkles className="h-3 w-3 text-white" />
+                  </div>
+                  <div className="bg-muted border border-border rounded-2xl rounded-tl-sm px-3.5 py-3 flex gap-1">
+                    {[0, 150, 300].map(d => (
+                      <span key={d} className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce"
+                        style={{ animationDelay: `${d}ms` }} />
+                    ))}
                   </div>
                 </div>
               )}
@@ -391,26 +368,19 @@ export default function ProjectPage() {
           </ScrollArea>
 
           {/* Input */}
-          <div className="p-3 border-t border-border">
-            <form
-              onSubmit={e => { e.preventDefault(); handleChat(input) }}
-              className="flex gap-2"
-            >
+          <div className="p-4 border-t border-border">
+            <form onSubmit={e => { e.preventDefault(); handleChat(input) }} className="flex gap-2">
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                placeholder="Ex: rends le texte plus court…"
                 disabled={chatLoading}
-                className="flex-1 h-10 px-3 rounded-xl border border-border bg-background text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                placeholder="Ex : rends le texte plus court…"
+                className="flex-1 h-10 px-3.5 rounded-xl border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 transition-shadow"
               />
-              <Button
-                type="submit"
-                size="icon"
-                disabled={!input.trim() || chatLoading}
-                className="gradient-brand border-0 text-white flex-shrink-0"
-              >
+              <Button type="submit" size="icon" disabled={!input.trim() || chatLoading}
+                className="gradient-brand border-0 text-white shadow-md shadow-brand/20 hover:opacity-90 shrink-0">
                 {chatLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
             </form>
