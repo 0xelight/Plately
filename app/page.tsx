@@ -97,7 +97,7 @@ export default function ProfilePage() {
         {/* Background decoration */}
         <div className="absolute inset-0 bg-dots opacity-40" />
         <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full gradient-brand opacity-10 blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-brand-light opacity-5 blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gold opacity-10 blur-3xl" />
 
         <div className="relative z-10 flex flex-col h-full">
           {/* Logo */}
@@ -115,7 +115,7 @@ export default function ProfilePage() {
             </p>
             <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight mb-6">
               Vos plats,{' '}
-              <span className="text-gradient-brand">viraux.</span>
+              <span className="text-gradient-gold">viraux.</span>
             </h1>
             <p className="text-muted-foreground leading-relaxed text-lg">
               Photo dans, vidéo TikTok et carrousel Instagram sortent. Sans équipe créative.

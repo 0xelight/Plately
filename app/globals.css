@@ -1,50 +1,48 @@
 @import "tailwindcss";
 
 @theme {
-  /* ── Brand ─────────────────────────────────────── */
-  --color-brand:           #E8581A;
-  --color-brand-light:     #F59E0B;
-  --color-brand-muted:     #FDE8D8;
+  /* ── Brand — Marine & Champagne ───────────────────── */
+  --color-brand:           #1B2B4B;
+  --color-brand-mid:       #2C4A7C;
+  --color-brand-muted:     #E8EDF5;
 
-  /* ── Semantic ───────────────────────────────────── */
-  --color-background:      #FDFAF6;
-  --color-foreground:      #1A1209;
+  --color-gold:            #BFA15C;
+  --color-gold-light:      #F5EDD6;
+
+  /* ── Semantic ───────────────────────────────────────── */
+  --color-background:      #FDFCF9;
+  --color-foreground:      #0E1825;
 
   --color-card:            #FFFFFF;
-  --color-card-foreground: #1A1209;
+  --color-card-foreground: #0E1825;
 
   --color-popover:         #FFFFFF;
-  --color-popover-foreground: #1A1209;
+  --color-popover-foreground: #0E1825;
 
-  --color-primary:         #E8581A;
+  --color-primary:         #1B2B4B;
   --color-primary-foreground: #FFFFFF;
 
-  --color-secondary:       #F4EFE7;
-  --color-secondary-foreground: #4A3728;
+  --color-secondary:       #F2EEE8;
+  --color-secondary-foreground: #3A3228;
 
-  --color-muted:           #F4EFE7;
-  --color-muted-foreground:#8A7B6C;
+  --color-muted:           #F2EEE8;
+  --color-muted-foreground:#897C6E;
 
-  --color-accent:          #FDE8D8;
-  --color-accent-foreground: #8B2500;
+  --color-accent:          #E8EDF5;
+  --color-accent-foreground: #1B2B4B;
 
-  --color-destructive:     #DC2626;
+  --color-destructive:     #C0392B;
   --color-destructive-foreground: #FFFFFF;
 
-  --color-border:          #E8DECE;
-  --color-input:           #E8DECE;
-  --color-ring:            #E8581A;
+  --color-border:          #E4DDD4;
+  --color-input:           #E4DDD4;
+  --color-ring:            #1B2B4B;
 
-  /* ── Typography ─────────────────────────────────── */
+  /* ── Typography ─────────────────────────────────────── */
   --font-sans: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
-  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
 
   /* ── Radius ─────────────────────────────────────── */
   --radius: 0.875rem;
-
-  /* ── Shadows ────────────────────────────────────── */
-  --shadow-card: 0 1px 3px 0 rgb(26 18 9 / 0.06), 0 1px 2px -1px rgb(26 18 9 / 0.04);
-  --shadow-elevated: 0 4px 24px 0 rgb(26 18 9 / 0.10), 0 1px 4px 0 rgb(26 18 9 / 0.06);
 }
 
 @layer base {
@@ -54,8 +52,7 @@
   }
 
   html {
-    -webkit-text-size-adjust: 100%;
-    font-feature-settings: 'cv01', 'cv02', 'ss01';
+    font-feature-settings: 'cv01', 'ss01';
   }
 
   body {
@@ -68,10 +65,9 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
     font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.15;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
   }
 
   :focus-visible {
@@ -87,23 +83,37 @@
 }
 
 @layer utilities {
-  /* ── Brand gradient ──────────────────────────────── */
+  /* ── Brand gradients ─────────────────────────────── */
   .gradient-brand {
-    background: linear-gradient(135deg, #E8581A 0%, #F59E0B 100%);
+    background: linear-gradient(135deg, #1B2B4B 0%, #2C4A7C 100%);
   }
 
   .gradient-brand-soft {
-    background: linear-gradient(135deg, #FDE8D8 0%, #FEF3C7 100%);
+    background: linear-gradient(135deg, #E8EDF5 0%, #EEF2FA 100%);
   }
 
   .gradient-page {
-    background: radial-gradient(ellipse 80% 50% at 50% -20%, #FDE8D8 0%, transparent 60%),
-                linear-gradient(180deg, #FDFAF6 0%, #FDF8F2 100%);
+    background:
+      radial-gradient(ellipse 70% 40% at 20% -10%, #E8EDF5 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 80% 110%, #F5EDD6 0%, transparent 50%),
+      #FDFCF9;
+  }
+
+  /* ── Gold accent ──────────────────────────────────── */
+  .gradient-gold {
+    background: linear-gradient(135deg, #BFA15C 0%, #D4B97A 100%);
   }
 
   /* ── Text gradient ───────────────────────────────── */
   .text-gradient-brand {
-    background: linear-gradient(135deg, #E8581A 0%, #F59E0B 100%);
+    background: linear-gradient(135deg, #1B2B4B 0%, #2C4A7C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #BFA15C 0%, #D4B97A 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -111,54 +121,41 @@
 
   /* ── Glass ───────────────────────────────────────── */
   .glass {
-    background: rgba(255, 253, 250, 0.72);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(232, 222, 206, 0.6);
+    background: rgba(253, 252, 249, 0.85);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(228, 221, 212, 0.7);
+  }
+
+  /* ── Dot pattern ─────────────────────────────────── */
+  .bg-dots {
+    background-image: radial-gradient(circle, #D8D2C8 1px, transparent 1px);
+    background-size: 22px 22px;
   }
 
   /* ── Animations ──────────────────────────────────── */
   .animate-in {
-    animation: plately-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: pl-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-
   .animate-in-up {
-    animation: plately-fade-in-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: pl-fade-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  @keyframes plately-fade-in {
+  @keyframes pl-fade-in {
     from { opacity: 0; }
     to   { opacity: 1; }
   }
-
-  @keyframes plately-fade-in-up {
-    from { opacity: 0; transform: translateY(12px); }
+  @keyframes pl-fade-up {
+    from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── Dot pattern bg ─────────────────────────────── */
-  .bg-dots {
-    background-image: radial-gradient(circle, #E8DECE 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-
-  /* ── Noise texture ───────────────────────────────── */
-  .noise::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    border-radius: inherit;
   }
 
   /* ── Scrollbar ───────────────────────────────────── */
   .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: #E8DECE transparent;
+    scrollbar-color: #D8D2C8 transparent;
   }
-
-  .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background: #E8DECE; border-radius: 99px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #D8D2C8; border-radius: 99px; }
 }
