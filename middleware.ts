@@ -5,7 +5,7 @@ const SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET ?? 'plately-dev-secret-please-change-in-production'
 )
 
-const PROTECTED_PREFIXES = ['/', '/new', '/project', '/projects']
+const PROTECTED_PREFIXES = ['/new', '/project', '/projects']
 const PUBLIC_PATHS = ['/login']
 
 export async function middleware(req: NextRequest) {

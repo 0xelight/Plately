@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
+import { mkdir } from 'fs/promises'
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
-
-export const config = {
-  api: { bodyParser: false },
-}
+import sharp from 'sharp'
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
@@ -24,9 +21,9 @@ export async function POST(req: NextRequest) {
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
     const buffer = Buffer.from(await file.arrayBuffer())
-    const ext = file.name.split('.').pop() ?? 'jpg'
-    const filePath = join(dir, `photo_${i}.${ext}`)
-    await writeFile(filePath, buffer)
+    const filePath = join(dir, `photo_${i}.jpg`)
+    // Convert any format (HEIC, TIFF, BMP…) to JPEG for OpenAI compatibility
+    await sharp(buffer).jpeg({ quality: 90 }).toFile(filePath)
     paths.push(filePath)
   }
 

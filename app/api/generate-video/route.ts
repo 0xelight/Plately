@@ -120,16 +120,17 @@ export async function POST(req: NextRequest) {
     const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'
     const dataUrl = `data:${mime};base64,${photoBase64}`
 
-    const result = await fal.subscribe('fal-ai/seedance-video/v1-lite/image-to-video', {
+    const result = await fal.subscribe('bytedance/seedance-2.0/image-to-video', {
       input: {
         image_url: dataUrl,
         prompt: slide.camera_prompt,
-        duration: slide.duration_sec <= 4 ? 4 : 8,
+        duration: String(slide.duration_sec <= 4 ? 4 : 8) as '4' | '8',
         aspect_ratio: '9:16',
+        generate_audio: false,
       },
-    }) as { video?: { url?: string }; data?: { video?: { url?: string } } }
+    }) as { data?: { video?: { url?: string } } }
 
-    const videoUrl = result?.video?.url ?? (result as { data?: { video?: { url?: string } } })?.data?.video?.url
+    const videoUrl = result?.data?.video?.url
     if (!videoUrl) throw new Error(`No video URL for slide ${slide.id}`)
 
     const clipRes = await fetch(videoUrl)

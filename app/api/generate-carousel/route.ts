@@ -10,7 +10,8 @@ const CANVAS_W = 1080
 const CANVAS_H = 1350
 
 function buildSvgOverlay(slide: Slide, w: number, h: number): string {
-  const { text, size, position, color, animation } = slide.overlay
+  const overlay = slide.overlay ?? { text: '', size: 'medium', position: 'bottom-center', color: '#ffffff', animation: 'fade' }
+  const { text, size, position, color, animation } = overlay
   const fontSize = FONT_SIZES[size]
   const padding = 40
 

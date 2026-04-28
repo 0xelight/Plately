@@ -47,14 +47,14 @@ Return ONLY valid JSON patch. Zero preamble. Zero explanation.`
   }))
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4.1-mini',
+    model: 'gpt-5.4',
     messages: [
       { role: 'system', content: systemPrompt },
       ...chatHistory,
       { role: 'user', content: message },
     ],
     response_format: { type: 'json_object' },
-    max_tokens: 1000,
+    max_completion_tokens: 1000,
   })
 
   const patchRaw = response.choices[0].message.content ?? '{}'
@@ -66,7 +66,7 @@ Return ONLY valid JSON patch. Zero preamble. Zero explanation.`
 
   // Build human-readable assistant message
   const summaryRes = await openai.chat.completions.create({
-    model: 'gpt-4.1-mini',
+    model: 'gpt-5.4',
     messages: [
       {
         role: 'system',
@@ -74,7 +74,7 @@ Return ONLY valid JSON patch. Zero preamble. Zero explanation.`
       },
       { role: 'user', content: `J'ai demandé: "${message}". Tu as appliqué ce patch: ${patchRaw}` },
     ],
-    max_tokens: 100,
+    max_completion_tokens: 100,
   })
   const assistantMessage = summaryRes.choices[0].message.content ?? 'Modifications appliquées.'
 

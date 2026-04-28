@@ -30,8 +30,12 @@ export async function POST(req: NextRequest) {
     photo_paths.map(async (p) => {
       const buf = await readFile(p)
       const b64 = buf.toString('base64')
-      const ext = p.split('.').pop() ?? 'jpeg'
-      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'
+      const ext = p.split('.').pop()?.toLowerCase() ?? 'jpg'
+      const mime =
+        ext === 'png' ? 'image/png' :
+        ext === 'webp' ? 'image/webp' :
+        ext === 'gif' ? 'image/gif' :
+        'image/jpeg'
       return {
         type: 'image_url' as const,
         image_url: { url: `data:${mime};base64,${b64}`, detail: 'high' as const },
@@ -73,12 +77,12 @@ Generate the SceneJSON now.`,
   ]
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4.1',
+    model: 'gpt-5.4',
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userContent },
     ],
-    max_tokens: 4096,
+    max_completion_tokens: 4096,
     response_format: { type: 'json_object' },
   })
 
