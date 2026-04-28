@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: plately
+      POSTGRES_PASSWORD: plately
+      POSTGRES_DB: plately
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plately -d plately"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://plately:plately@db:5432/plately
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      FAL_KEY: ${FAL_KEY}
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persist generated videos/carousels across restarts
+      - outputs:/app/public/outputs
+
+volumes:
+  postgres_data:
+  outputs:

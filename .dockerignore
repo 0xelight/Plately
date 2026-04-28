@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env.*.local
+public/outputs
+/tmp/plately
+npm-debug.log*
+*.tsbuildinfo
+Dockerfile
+docker-compose.yml
+.dockerignore
