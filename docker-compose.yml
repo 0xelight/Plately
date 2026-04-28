@@ -28,6 +28,7 @@ services:
       DATABASE_URL: postgresql://plately:plately@db:5432/plately
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       FAL_KEY: ${FAL_KEY}
+      JWT_SECRET: ${JWT_SECRET}
     ports:
       - "3000:3000"
     volumes:

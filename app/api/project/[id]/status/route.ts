@@ -10,7 +10,11 @@ export async function GET(
   const { id } = await params
 
   const [project] = await sql`
-    SELECT id, status, format, platform, scene_json, video_url, carousel_urls, caption, hashtags
+    SELECT id, format, platform, scene_json, video_url, carousel_urls, caption, hashtags, photo_paths,
+      CASE
+        WHEN format = 'both' AND video_url IS NOT NULL AND carousel_urls IS NOT NULL THEN 'done'
+        ELSE status
+      END AS status
     FROM projects
     WHERE id = ${id}
   `

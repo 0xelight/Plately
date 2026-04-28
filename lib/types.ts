@@ -53,6 +53,12 @@ export interface Profile {
   created_at: string
 }
 
+export interface User {
+  id: string
+  email: string
+  created_at: string
+}
+
 export interface Project {
   id: string
   profile_id: string
@@ -64,6 +70,7 @@ export interface Project {
   carousel_urls: string[] | null
   caption: string | null
   hashtags: string[] | null
+  photo_paths: string[] | null
   created_at: string
 }
 

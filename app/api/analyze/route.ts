@@ -73,22 +73,23 @@ Generate the SceneJSON now.`,
   ]
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: 'gpt-4.1',
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userContent },
     ],
-    max_tokens: 2000,
+    max_tokens: 4096,
     response_format: { type: 'json_object' },
   })
 
   const raw = response.choices[0].message.content ?? '{}'
   const sceneJson = JSON.parse(raw) as SceneJSON
 
-  // Update project with scene JSON
   await sql`
     UPDATE projects
-    SET scene_json = ${JSON.stringify(sceneJson)}::jsonb, status = 'generating'
+    SET scene_json = ${JSON.stringify(sceneJson)}::jsonb,
+        photo_paths = ${photo_paths},
+        status = 'generating'
     WHERE id = ${project.id}
   `
 

@@ -8,8 +8,9 @@ import { cn } from '@/lib/utils'
 import {
   Upload, X, Loader2, CheckCircle2, ChefHat,
   ImagePlus, Clapperboard, LayoutGrid, Layers,
-  Smartphone, PlaySquare, Camera,
+  Smartphone, PlaySquare, Camera, FolderOpen, LogOut,
 } from 'lucide-react'
+import Link from 'next/link'
 import type { Format, Platform, Profile } from '@/lib/types'
 
 const FORMATS: { value: Format; label: string; icon: React.ElementType; desc: string }[] = [
@@ -166,11 +167,20 @@ export default function NewPage() {
           <span className="text-muted-foreground text-sm">·</span>
           <span className="text-sm text-muted-foreground font-medium">{profile.resto_name}</span>
           <div className="ml-auto flex items-center gap-3">
+            <Link href="/projects" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium">
+              <FolderOpen className="h-3.5 w-3.5" />
+              Mes projets
+            </Link>
             <button
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
-              onClick={() => { localStorage.clear(); router.push('/') }}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+              onClick={async () => {
+                await fetch('/api/auth/logout', { method: 'POST' })
+                localStorage.clear()
+                router.push('/login')
+              }}
             >
-              Changer de profil
+              <LogOut className="h-3.5 w-3.5" />
+              Déconnexion
             </button>
           </div>
         </div>

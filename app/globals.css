@@ -150,6 +150,14 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* ── Shadows ─────────────────────────────────────── */
+  .shadow-elevated {
+    box-shadow: 0 4px 24px rgba(14, 24, 37, 0.08), 0 1px 4px rgba(14, 24, 37, 0.04);
+  }
+  .shadow-card {
+    box-shadow: 0 1px 4px rgba(14, 24, 37, 0.06), 0 1px 2px rgba(14, 24, 37, 0.03);
+  }
+
   /* ── Scrollbar ───────────────────────────────────── */
   .custom-scrollbar {
     scrollbar-width: thin;

@@ -53,12 +53,17 @@ export default function ProfilePage() {
   })
 
   useEffect(() => {
-    const profileId = localStorage.getItem('plately_profile_id')
-    if (profileId) {
-      router.push('/new')
-    } else {
-      setChecking(false)
-    }
+    fetch('/api/auth/me')
+      .then(r => r.json())
+      .then(data => {
+        if (data.profile) {
+          localStorage.setItem('plately_profile_id', data.profile.id)
+          localStorage.setItem('plately_profile', JSON.stringify(data.profile))
+          router.push('/new')
+        } else {
+          setChecking(false)
+        }
+      })
   }, [router])
 
   const isValid = !!(form.resto_name && form.resto_type && form.city && form.style && form.vibe)

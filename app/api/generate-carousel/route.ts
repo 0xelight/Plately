@@ -98,6 +98,7 @@ export async function POST(req: NextRequest) {
         hashtags = ${scene_json.hashtags},
         status = CASE
           WHEN format = 'carousel' THEN 'done'
+          WHEN format = 'both' AND video_url IS NOT NULL THEN 'done'
           ELSE status
         END
     WHERE id = ${project_id}

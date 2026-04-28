@@ -172,8 +172,7 @@ export default function ProjectPage() {
 
       if (data.needs_rerender) {
         setRerendering(true)
-        const photoPaths = (project?.carousel_urls ?? []).map((u: string) =>
-          u.replace(`/outputs/${id}/`, `/tmp/plately/${id}/`))
+        const photoPaths = project?.photo_paths ?? []
 
         const rerenderCalls: Promise<Response>[] = []
         if (data.rerender_type === 'carousel' || data.rerender_type === 'both')

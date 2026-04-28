@@ -47,7 +47,7 @@ Return ONLY valid JSON patch. Zero preamble. Zero explanation.`
   }))
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: 'gpt-4.1-mini',
     messages: [
       { role: 'system', content: systemPrompt },
       ...chatHistory,
@@ -66,7 +66,7 @@ Return ONLY valid JSON patch. Zero preamble. Zero explanation.`
 
   // Build human-readable assistant message
   const summaryRes = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: 'gpt-4.1-mini',
     messages: [
       {
         role: 'system',
